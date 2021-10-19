@@ -20,6 +20,20 @@ mv /var/www/html/example-singleServer-pretty.html /var/www/html/index.html
 chown -R www-data /var/www/html/
 echo "${LCYAN}Configuring MySQL${NC}"
 sleep 1s
+echo "${LCYAN}Please enter desired password for MySQL root user.${NC}"
+stty -echo
+read mypass
+stty echo
+#MySQL Configuration
+mysql -u root -e "CREATE DATABASE speedtest;"
+mysql -u root speedtest < speedtest/results/telemetry_mysql.sql
+mysql -u root << EOF
+alter user 'root'@'localhost' identified with mysql_native_password by '$mypass';
+flush privileges;
+
+EOF
+echo "${LCYAN}Now updating telemetry settings.${NC}"
+sleep 1s
 echo "${LCYAN}Please enter the status page password${NC}"
 stty -echo
 read statpass
@@ -28,19 +42,6 @@ echo "${LCYAN}If set to true, test IDs will be obfuscated to prevent users from 
 read obfus
 echo "${LCYAN}If set to true, IP addresses will be redacted from IP and ISP info fields, as well as the log. Please enter True or False.${NC}"
 read ipfield
-echo "${LCYAN}Please enter desired password for MySQL root user.${NC}"
-stty -echo
-read mypass
-stty echo
-#MySQL Configuration
-mysql -u root << EOF
-alter user 'root'@'localhost' identified with mysql_native_password by '$mypass';
-flush privileges;
-CREATE DATABASE speedtest;
-EOF
-mysql -u root -p speedtest < speedtest/results/telemetry_mysql.sql
-echo "${LCYAN}Now updating telemetry settings.${NC}"
-sleep 1s
 sed -i -e "s/\(stats_password = '\).*/\1$statpass';/" \
 -e "s/\(enable_id_obfuscation = \).*/\1$obfus;/" \
 -e "s/\(redact_ip_addresses = \).*/\1$ipfield;/" \
