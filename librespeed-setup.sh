@@ -54,6 +54,6 @@ chown -R www-data /var/www/html/
 
 echo "${LCYAN}The password for your status page is:${RED}$statpass${NC}${LCYAN}. you can access it at ${BLUE}http://localhost/results/stats.php${NC}"
 sleep 5s
-echo "${LCYAN}Your temporary password for MySQL root user is '${RED}P@ssw0rd${NC}${LCYAN}', this can be changed by running the following command in MySQL: alter user 'root'@'localhost' identified with mysql_native_password by 'PASSWORD'; "
+echo "${LCYAN}Your temporary password for MySQL root user is '${RED}$mypass${NC}${LCYAN}', this can be changed by running the following command in MySQL: alter user 'root'@'localhost' identified with mysql_native_password by 'PASSWORD'; "
 sleep 2s
 echo "${LCYAN}Please ensure that you update this password in ${BLUE}/var/www/html/results/telemetry_settings.php${NC}${LCYAN}. This is also where you can change the password for the status page.${NC}"
