@@ -25,13 +25,12 @@ stty -echo
 read mypass
 stty echo
 #MySQL Configuration
-mysql -u root -e "CREATE DATABASE speedtest;"
-mysql -u root speedtest < speedtest/results/telemetry_mysql.sql
 mysql -u root << EOF
 alter user 'root'@'localhost' identified with mysql_native_password by '$mypass';
 flush privileges;
-
+CREATE DATABASE speedtest;
 EOF
+mysql -u root-p$mypass speedtest < speedtest/results/telemetry_mysql.sql
 echo "${LCYAN}Now updating telemetry settings.${NC}"
 sleep 1s
 echo "${LCYAN}Please enter the status page password${NC}"
