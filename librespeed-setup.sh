@@ -1,18 +1,24 @@
 #!/bin/sh
 #The purpose of this script is to assist in expiditing the installation of LibreSpeed to external entities.
-echo "Beginning the installation process"
+RED='\033[0;31m'
+BLUE='\033[0;34m'
+LCYAN='\033[0;36m'
+NC='\033[0m'
+
+
+echo "${LCYAN}Beginning the installation process${NC}"
 sleep 2s
-echo "Installing prequeqets..."
+echo "${LCYAN}Installing prequeqets...${NC}"
 sleep 2s
 apt install -y apache2 php php-pear php-cgi php-common php-curl php-mbstring php-gd php-mysql php-bcmath php-imap php-json php-xml php-snmp php-fpm php-zip mysql-server
-echo "cloning LibreSpeed Repository"
+echo "${LCYAN}Cloning LibreSpeed Repository${NC}"
 sleep 2s
 git clone https://github.com/adolfintel/speedtest.git
 rm /var/www/html/index.html
 cp -R speedtest/backend/ speedtest/results/ speedtest/example-singleServer-pretty.html speedtest/*.js /var/www/html/
 mv /var/www/html/example-singleServer-pretty.html /var/www/html/index.html
 chown -R www-data /var/www/html/
-echo "Configuring MySQL"
+echo "${LCYAN}Configuring MySQL${NC}"
 sleep 2s
 #MySQL Configuration
 mysql -u root << EOF
@@ -21,15 +27,15 @@ flush privileges;
 CREATE DATABASE speedtest;
 EOF
 mysql -u root -p speedtest < speedtest/results/telemetry_mysql.sql
-echo "Now updating telemetry settings."
+echo "${LCYAN}Now updating telemetry settings.${NC}"
 sleep 2s
-echo "Please enter the status page password"
+echo "${LCYAN}Please enter the status page password${NC}"
 stty -echo
 read statpass
 stty echo
-echo "If set to true, test IDs will be obfuscated to prevent users from guessing URLs of other tests. Please enter True or False."
+echo "${LCYAN}If set to true, test IDs will be obfuscated to prevent users from guessing URLs of other tests. Please enter True or False.${NC}"
 read obfus
-echo "If set to true, IP addresses will be redacted from IP and ISP info fields, as well as the log. Please enter True or False."
+echo "${LCYAN}If set to true, IP addresses will be redacted from IP and ISP info fields, as well as the log. Please enter True or False.${NC}"
 read ipfield
 
 sed -i -e "s/\(stats_password = '\).*/\1$statpass';/" \
@@ -43,8 +49,8 @@ sed -i -e "s/\(stats_password = '\).*/\1$statpass';/" \
 cp speedtest/example-singleServer-full.html /var/www/html/index.html
 chown -R www-data /var/www/html/
 
-echo "The password for your status page is: "$statpass ". you can access it at http://localhost/results/stats.php"
+echo "${LCYAN}The password for your status page is:${RED}$statpass${NC}${LCYAN}. you can access it at ${BLUE}http://localhost/results/stats.php${NC}"
 sleep 5s
-echo "Your temporary password for MySQL root user is 'P@ssw0rd', this can be changed by running the following command in MySQL: alter user 'root'@'localhost' identified with mysql_native_password by 'PASSWORD'; "
+echo "${LCYAN}Your temporary password for MySQL root user is '${RED}P@ssw0rd${NC}${LCYAN}', this can be changed by running the following command in MySQL: alter user 'root'@'localhost' identified with mysql_native_password by 'PASSWORD'; "
 sleep 2s
-echo "Please ensure that you update this password in /var/www/html/results/telemetry_settings.php. This is also where you can change the password for the status page."
+echo "${LCYAN}Please ensure that you update this password in ${BLUE}/var/www/html/results/telemetry_settings.php${NC}${LCYAN}. This is also where you can change the password for the status page.${NC}"
